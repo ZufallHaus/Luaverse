@@ -1,7 +1,10 @@
-package io.github.jacobzufall.luaverse
+package com.zufallhaus.luaverse
 
 fun main() {
-    println("Luaverse : Lua version manager for Windows systems.")
+    println("Luaverse v0.0.1 : Lua version manager for Windows systems.")
+    println("Created by Jacob Zufall.")
+    println("Maintained and distributed by ZufallHaus.")
+    println("") // Spacer
     println("Say \"help\" for a list of commands.")
 
     // Main loop

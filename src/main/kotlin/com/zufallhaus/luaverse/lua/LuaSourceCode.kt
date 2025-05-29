@@ -1,13 +1,14 @@
-package io.github.jacobzufall.luaverse.lua
+package com.zufallhaus.luaverse.lua
 
-import io.github.jacobzufall.luaverse.Settings
-import io.github.jacobzufall.luaverse.utility.VersionString
+import com.zufallhaus.luaverse.Settings
+import com.zufallhaus.luaverse.utility.VersionString
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
 import java.io.File
+import kotlin.text.get
 
 /**
  * Handles downloading, extracting, and building Lua.

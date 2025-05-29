@@ -1,11 +1,12 @@
-package io.github.jacobzufall.luaverse.systemInteraction
+package com.zufallhaus.luaverse.systemInteraction
 
-import io.github.jacobzufall.luaverse.Settings
+import com.zufallhaus.luaverse.Settings
 
 import java.io.File
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.text.get
 
 /**
  * Handles interaction with the Windows Registry for the purpose of modifying the path environment variable.

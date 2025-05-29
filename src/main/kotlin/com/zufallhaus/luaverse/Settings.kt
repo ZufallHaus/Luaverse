@@ -1,8 +1,9 @@
-package io.github.jacobzufall.luaverse
+package com.zufallhaus.luaverse
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.collections.iterator
 
 import kotlin.io.path.isDirectory
 
@@ -11,7 +12,11 @@ import kotlin.io.path.isDirectory
  */
 object Settings {
     private val appDataPath: Path = Paths.get(System.getenv("APPDATA")).parent
-    var luaverseDir: Path = appDataPath.resolve("Local/Programs/Lua")
+    /*
+    I'm leaning towards a special directory for installs using this tool, that way it's easier to manage and other
+    programs are less likely to get in the way.
+    */
+    var luaverseDir: Path = appDataPath.resolve("Local/Programs/Luaverse")
 
     /*
     Each map index is a unique nickname of the directory. Each map value is a list containing [0] a description of
@@ -37,7 +42,7 @@ object Settings {
 
         "extract" to mutableMapOf(
             "desc" to "The directory where Lua's source code is extracted to.",
-            "dir" to luaverseDir.resolve("Extracted")
+            "dir" to luaverseDir.resolve("Extracts")
         )
     )
 

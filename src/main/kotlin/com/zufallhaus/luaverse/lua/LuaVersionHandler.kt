@@ -1,9 +1,10 @@
-package io.github.jacobzufall.luaverse.lua
+package com.zufallhaus.luaverse.lua
 
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
+import kotlin.collections.iterator
 
 /**
  * A singleton object that handles interacting with lua.org to obtain different versions of Lua.

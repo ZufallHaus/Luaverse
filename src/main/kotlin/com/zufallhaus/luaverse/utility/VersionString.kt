@@ -1,4 +1,4 @@
-package io.github.jacobzufall.luaverse.utility
+package com.zufallhaus.luaverse.utility
 
 class VersionString(version: String) {
     /*

@@ -3,16 +3,17 @@ All commands return "true" or "false" based on if their execution was successful
 returned is unused, but I am implementing it in case it is needed in the future.
 */
 
-package io.github.jacobzufall.luaverse
+package com.zufallhaus.luaverse
 
-import io.github.jacobzufall.luaverse.lua.LuaSourceCode
-import io.github.jacobzufall.luaverse.lua.LuaVersionHandler
-import io.github.jacobzufall.luaverse.systemInteraction.PathEnvironment
-import io.github.jacobzufall.luaverse.utility.VersionString
+import com.zufallhaus.luaverse.lua.LuaSourceCode
+import com.zufallhaus.luaverse.lua.LuaVersionHandler
+import com.zufallhaus.luaverse.systemInteraction.PathEnvironment
+import com.zufallhaus.luaverse.utility.VersionString
 
 import java.awt.Desktop
 import java.io.File
 import java.nio.file.Path
+import kotlin.collections.iterator
 
 class Command(command: List<String>) {
     // Map commands here.

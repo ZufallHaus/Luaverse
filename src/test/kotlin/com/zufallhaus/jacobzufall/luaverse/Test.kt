@@ -1,4 +1,4 @@
-package io.github.jacobzufall.luaverse
+package com.zufallhaus.jacobzufall.luaverse
 
 class Vector1(private val x: Int) {
     infix fun distanceTo(other: Vector1): Int {
