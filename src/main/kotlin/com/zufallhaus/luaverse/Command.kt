@@ -178,7 +178,10 @@ class Command(command: List<String>) {
      */
     private fun dirCommand(command: List<String>): Boolean {
         when (command.size) {
-            // If the command is simply "dir", the program will list every directory used.
+            /*
+            If the command is simply "dir", the program will list every directory used.
+            This also creates the directories if they don't exist, inadvertently.
+            */
             1 -> {
                 print("\n")
                 println("--- DIRECTORY LISTING ---")

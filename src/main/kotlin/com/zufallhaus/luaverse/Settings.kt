@@ -25,44 +25,33 @@ object Settings {
     TODO: Figure out some form of type safety for the inner MutableMap. "Any" doesn't exactly cut it for me.
     */
     val directories: Map<String, MutableMap<String, Any>> = mapOf(
-        "build" to mutableMapOf(
+        /*
+        The idea behind a builds folder is so that a version of Lua can be built and stored here until the user is
+        ready to install it.
+        */
+        "builds" to mutableMapOf(
             "desc" to "The directory where Lua is built to.",
-            "dir" to luaverseDir.resolve("Lua")
+            "dir" to luaverseDir.resolve("Builds")
         ),
 
-        "backup" to mutableMapOf(
+        "backups" to mutableMapOf(
             "desc" to "The directory where backups of the Path environment variable are stored.",
             "dir" to luaverseDir.resolve("Backups")
         ),
 
-        "download" to mutableMapOf(
+        "downloads" to mutableMapOf(
             "desc" to "The directory where Lua's source code is downloaded to prior to being extracted and built.",
-            "dir" to luaverseDir.resolve("Source")
+            "dir" to luaverseDir.resolve("Downloads")
         ),
 
-        "extract" to mutableMapOf(
+        "extracts" to mutableMapOf(
             "desc" to "The directory where Lua's source code is extracted to.",
             "dir" to luaverseDir.resolve("Extracts")
+        ),
+
+        "lua" to mutableMapOf(
+            "desc" to "The directory where Lua is installed.",
+            "dir" to luaverseDir.resolve("Lua")
         )
     )
-
-    // Essentially validates all the directories listed above.
-    init { for ((_, dirInfo) in directories) validateDirectory(dirInfo["dir"] as Path) }
-
-    /**
-     * Checks if a directory exists and attempts to create it if it doesn't.
-     *
-     * @param[directory] Path The directory to validate.
-     * @return If the directory was successfully created or not.
-     */
-    private fun validateDirectory(directory: Path): Boolean {
-        var result: Boolean = directory.isDirectory()
-
-        if (!result) {
-            Files.createDirectories(directory)
-            result = directory.isDirectory()
-        }
-
-        return result
-    }
 }
