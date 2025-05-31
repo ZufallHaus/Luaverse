@@ -1,10 +1,17 @@
+import org.gradle.api.file.DuplicatesStrategy
+
+application {
+    mainClass.set("com.zufallhaus.luaverse.MainKt")
+}
+
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.0.20"
+    application
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "com.zufallhaus"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -18,9 +25,22 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.27.1")
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.zufallhaus.luaverse.MainKt"
+    }
+
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }

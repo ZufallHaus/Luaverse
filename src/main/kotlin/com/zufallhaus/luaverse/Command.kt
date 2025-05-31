@@ -5,9 +5,9 @@ returned is unused, but I am implementing it in case it is needed in the future.
 
 package com.zufallhaus.luaverse
 
-import com.zufallhaus.luaverse.lua.LuaSourceCode
-import com.zufallhaus.luaverse.lua.LuaVersionHandler
-import com.zufallhaus.luaverse.systemInteraction.PathEnvironment
+import com.zufallhaus.luaverse.lua.SourceCode
+import com.zufallhaus.luaverse.lua.VersionHandler
+import com.zufallhaus.luaverse.system.PathEnvironment
 import com.zufallhaus.luaverse.utility.VersionString
 
 import java.awt.Desktop
@@ -41,7 +41,7 @@ class Command(command: List<String>) {
 
         when (command[1].lowercase()) {
             "versions" -> {
-                LuaVersionHandler.getAvailableLuaVersions()
+                VersionHandler.getAvailableLuaVersions()
             }
 
             "download" -> {
@@ -52,11 +52,21 @@ class Command(command: List<String>) {
                     VersionString("latest")
                 }
 
-                val sourceCode: LuaSourceCode = LuaSourceCode(version)
-                val success = sourceCode.download()
+                val sourceCode: SourceCode = SourceCode(version)
+                println("Downloading...")
+                val downloadSuccess: Boolean = sourceCode.download()
 
-                if (success) {
+                if (downloadSuccess) {
                     println("Download complete!")
+                    println("Extracting...")
+                    val extractSuccess: Boolean = sourceCode.extract()
+
+                    if (extractSuccess) {
+                        println("Extraction complete!")
+                    } else {
+                        println("Extraction failed!")
+                    }
+
                 } else {
                     println("Download failed!")
                 }
@@ -150,39 +160,37 @@ class Command(command: List<String>) {
      * @return If the command was executed successfully or not.
      */
     private fun buildCommand(command: List<String>): Boolean {
-        when (command.size) {
-            // If the user just says "build", the tool downloads and builds the current latest version.
-            1 -> {
-                /*
-                The latest version is always at the top of the website, so we can just grab the first value from
-                the map.
-                */
-                println(LuaVersionHandler.luaVersionFiles.firstNotNullOfOrNull { it.key }?.let { it::class })
+        // Attempts to find a specified version number.
+        val version: VersionString = try {
+            VersionString(command[2])
+        } catch(exception: IndexOutOfBoundsException) {
+            VersionString("latest")
+        }
 
-                // I guess this may be null if the website can't be reached?
-                val latestVersion: String? = LuaVersionHandler.luaVersionFiles.firstNotNullOfOrNull { it.key }
+        val sourceCode: SourceCode = SourceCode(version)
 
-                if (latestVersion != null) {
-                    /*
-                    After initialization, this constant will basically have two File objects. One directs to the
-                    downloaded files and the other to the extracted files.
-                    */
-                    val sourceCode: LuaSourceCode = LuaSourceCode(VersionString(latestVersion))
+        // Downloads the files.
+        println("Downloading...")
+        val downloadSuccess: Boolean = sourceCode.download()
 
-                } else {
-                    // I guess this is good enough, for now.
-                    println("The latest version of Lua could not be determined. Please specify the version you wish to" +
-                            "build explicitly.")
-                    return false
-                }
+        if (downloadSuccess) {
+            println("Download complete!")
 
-                return true
+            // Extracts the files.
+            println("Extracting...")
+            val extractSuccess: Boolean = sourceCode.extract()
+
+            if (extractSuccess) {
+                println("Extraction complete!")
+            } else {
+                println("Extraction failed!")
             }
 
-            2 -> return true // Add this later
-
-            else -> return invalidateCommand(command)
+        } else {
+            println("Download failed!")
         }
+
+        return true
     }
 
     /**

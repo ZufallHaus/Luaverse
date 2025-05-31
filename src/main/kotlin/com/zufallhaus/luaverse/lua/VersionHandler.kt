@@ -9,7 +9,7 @@ import kotlin.collections.iterator
 /**
  * A singleton object that handles interacting with lua.org to obtain different versions of Lua.
  */
-object LuaVersionHandler {
+object VersionHandler {
     // I think this should be private eventually?
     var luaVersionFiles: MutableMap<String, String> = mutableMapOf()
 

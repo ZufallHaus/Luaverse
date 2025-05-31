@@ -50,6 +50,12 @@ object Settings {
         "lua" to mutableMapOf(
             "desc" to "The directory where Lua is installed.",
             "dir" to luaverseDir.resolve("Lua")
+        ),
+
+        // This just helps with compatability with the dir command.
+        "main" to mutableMapOf(
+            "desc" to "The main Luaverse directory.",
+            "dir" to luaverseDir
         )
     )
 }

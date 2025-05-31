@@ -1,4 +1,4 @@
-package com.zufallhaus.luaverse.systemInteraction
+package com.zufallhaus.luaverse.system
 
 import com.zufallhaus.luaverse.Settings
 

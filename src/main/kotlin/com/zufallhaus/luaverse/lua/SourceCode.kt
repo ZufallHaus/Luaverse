@@ -3,11 +3,16 @@ package com.zufallhaus.luaverse.lua
 import com.zufallhaus.luaverse.Settings
 import com.zufallhaus.luaverse.utility.VersionString
 
+import java.io.File
+
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
-import java.io.File
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 /**
  * Handles downloading, extracting, and building Lua.
@@ -15,7 +20,7 @@ import java.io.File
  * Download and extraction is done automatically on object initialization. Building is done by invoking the build()
  * method.
  */
-class LuaSourceCode(val version: VersionString) {
+class SourceCode(val version: VersionString) {
     var sourceFile: File? = null
         private set
     var extractedFiles: File? = null
@@ -24,11 +29,42 @@ class LuaSourceCode(val version: VersionString) {
     fun download(): Boolean {
         // Downloads the requested version of Lua from https://www.lua.org/ftp/.
         when (version.rawVersion) {
-            "latest" -> sourceFile = fetchFileFromFtp(LuaVersionHandler.luaVersionFiles.firstNotNullOf { VersionString(it.key) })
-            else -> LuaVersionHandler.luaVersionFiles[version.delimitedVersion]?.let { sourceFile = fetchFileFromFtp(VersionString(it)) } ?: println("Version does not exist.")
+            "latest" -> sourceFile = fetchFileFromFtp(VersionHandler.luaVersionFiles.firstNotNullOf { VersionString(it.key) })
+            else -> VersionHandler.luaVersionFiles[version.delimitedVersion]?.let { sourceFile = fetchFileFromFtp(VersionString(it)) } ?: println("Version does not exist.")
         }
 
         return sourceFile != null
+    }
+
+    fun extract(): Boolean {
+        if (sourceFile != null) {
+            // Kotlin is complaining about sourceFile. Is there a better way to do this?
+            GzipCompressorInputStream(FileInputStream(sourceFile)).use { gzipIn ->
+                TarArchiveInputStream(gzipIn).use { tarIn ->
+                    var entry = tarIn.nextEntry
+                    while (entry != null) {
+                        val destination = File(Settings.directories["extracts"]!!["dir"].toString(), entry.name)
+
+                        if (entry.isDirectory) {
+                            destination.mkdirs()
+                            extractedFiles = destination
+                        } else {
+                            destination.parentFile.mkdirs()
+                            FileOutputStream(destination).use { out ->
+                                tarIn.copyTo(out)
+                            }
+                        }
+
+                        entry = tarIn.nextEntry
+                    }
+                }
+
+            }
+        } else {
+            println("Could not find sourceFile.")
+        }
+
+        return extractedFiles != null
     }
 
     // Maybe make a private function wrapped by this?
