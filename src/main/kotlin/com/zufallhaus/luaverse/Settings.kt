@@ -11,11 +11,9 @@ import kotlin.io.path.isDirectory
  * Global settings objects for this CLI.
  */
 object Settings {
+    // Should this be private?
     private val appDataPath: Path = Paths.get(System.getenv("APPDATA")).parent
-    /*
-    I'm leaning towards a special directory for installs using this tool, that way it's easier to manage and other
-    programs are less likely to get in the way.
-    */
+
     var luaverseDir: Path = appDataPath.resolve("Local/Programs/Luaverse")
 
     /*

@@ -13,6 +13,7 @@ import com.zufallhaus.luaverse.utility.VersionString
 import java.awt.Desktop
 import java.io.File
 import java.nio.file.Path
+
 import kotlin.collections.iterator
 
 class Command(command: List<String>) {
@@ -45,7 +46,20 @@ class Command(command: List<String>) {
 
             "download" -> {
                 // I'll add safety later.
-                val version: VersionString = VersionString(command[2])
+                val version: VersionString = try {
+                    VersionString(command[2])
+                } catch(exception: IndexOutOfBoundsException) {
+                    VersionString("latest")
+                }
+
+                val sourceCode: LuaSourceCode = LuaSourceCode(version)
+                val success = sourceCode.download()
+
+                if (success) {
+                    println("Download complete!")
+                } else {
+                    println("Download failed!")
+                }
             }
         }
 
@@ -104,7 +118,7 @@ class Command(command: List<String>) {
                         println(argument)
                     }
                 }
-                return PathEnvironment().backup()
+                return PathEnvironment.backup()
             }
 
             // Example use of this command: "registry restore luaverse_path-backup_1734551704987.json"
@@ -118,7 +132,7 @@ class Command(command: List<String>) {
 
                     3, 4 -> {
                         val hardRestore: Boolean = command.getOrNull(2) == "hard"
-                        return PathEnvironment().restore(command[1], hardRestore)
+                        return PathEnvironment.restore(command[1], hardRestore)
                     }
 
                     else -> return invalidateCommand(command)

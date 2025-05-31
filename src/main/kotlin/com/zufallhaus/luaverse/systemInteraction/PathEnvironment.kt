@@ -6,24 +6,23 @@ import java.io.File
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.text.get
 
 /**
  * Handles interaction with the Windows Registry for the purpose of modifying the path environment variable.
  */
-class PathEnvironment {
-    private val regKey: String = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"
-    private val envVar: String = "Path"
+object PathEnvironment {
+    private const val REGISTRY_KEY: String = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"
+    private const val ENVIRONMENT_VARIABLE: String = "Path"
 
     private val pathVarValues: List<String>
         // This method is a mess.
         get() {
-            val process: Process = ProcessBuilder("cmd.exe", "/c", "reg query \"$regKey\"").start()
+            val process: Process = ProcessBuilder("cmd.exe", "/c", "reg query \"$REGISTRY_KEY\"").start()
 
             val output: MutableList<String> = process.inputStream.bufferedReader().readText().split("    ").toMutableList()
             process.waitFor()
 
-            val pathValues: MutableList<String> = output[output.indexOf(envVar) + 2].split(";").toMutableList()
+            val pathValues: MutableList<String> = output[output.indexOf(ENVIRONMENT_VARIABLE) + 2].split(";").toMutableList()
             // Sometimes it shows escape characters at the end, which we don't want.
             if (pathValues.last() == "\r\n") pathValues.removeLast()
             // Removes any break-lines and such off the end.
@@ -56,8 +55,8 @@ class PathEnvironment {
         newPathValue += textToAppend
         checkForSc(newPathValue)
 
-        val process: Process = ProcessBuilder("reg", "add", regKey, "/v",
-            envVar, "/t", "REG_EXPAND_SZ", "/d", newPathValue, "/f").inheritIO().start()
+        val process: Process = ProcessBuilder("reg", "add", REGISTRY_KEY, "/v",
+            ENVIRONMENT_VARIABLE, "/t", "REG_EXPAND_SZ", "/d", newPathValue, "/f").inheritIO().start()
 
         return process.waitFor()
     }
@@ -68,8 +67,8 @@ class PathEnvironment {
      * @return the exit value of the process represented by this Process object. By convention, the value 0 indicates normal termination.
      */
     private fun overrideSystemPath(newPath: String): Int {
-        val process: Process = ProcessBuilder("reg", "add", regKey, "/v",
-            envVar, "/t", "REG_EXPAND_SZ", "/d", newPath,
+        val process: Process = ProcessBuilder("reg", "add", REGISTRY_KEY, "/v",
+            ENVIRONMENT_VARIABLE, "/t", "REG_EXPAND_SZ", "/d", newPath,
             "/f").inheritIO().start()
         return process.waitFor()
     }

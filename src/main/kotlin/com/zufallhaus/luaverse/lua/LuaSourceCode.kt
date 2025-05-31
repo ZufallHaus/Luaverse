@@ -8,7 +8,6 @@ import okhttp3.Request
 import okhttp3.Response
 
 import java.io.File
-import kotlin.text.get
 
 /**
  * Handles downloading, extracting, and building Lua.
@@ -16,35 +15,45 @@ import kotlin.text.get
  * Download and extraction is done automatically on object initialization. Building is done by invoking the build()
  * method.
  */
-class LuaSourceCode(version: VersionString) {
+class LuaSourceCode(val version: VersionString) {
     var sourceFile: File? = null
+        private set
     var extractedFiles: File? = null
+        private set
 
-    init {
+    fun download(): Boolean {
         // Downloads the requested version of Lua from https://www.lua.org/ftp/.
         when (version.rawVersion) {
             "latest" -> sourceFile = fetchFileFromFtp(LuaVersionHandler.luaVersionFiles.firstNotNullOf { VersionString(it.key) })
             else -> LuaVersionHandler.luaVersionFiles[version.delimitedVersion]?.let { sourceFile = fetchFileFromFtp(VersionString(it)) } ?: println("Version does not exist.")
         }
 
-        // Extracts the files downloaded in the previous step.
-        if (sourceFile != null) {
-            println("If you're seeing this is means Jacob didn't write the code to extract the file yet.")
+        return sourceFile != null
+    }
 
-        } else {
-            println("sourceFile is null or something, idk lol")
+    // Maybe make a private function wrapped by this?
+    fun findDownloadedFiles() {
+        val downloadedFiles = File(Settings.directories["downloads"]!!["dir"].toString()).listFiles() ?: arrayOf()
+
+        for (file in downloadedFiles) {
+            if (file.isFile && file.name == "lua-" + version.rawVersion + ".tar.gz") {
+                sourceFile = file
+                break
+            }
         }
     }
+
+    fun findExtractedFiles() {}
 
     // TODO: Add handling for multiple downloads.
     // I forgot what I meant by the TODO above...
     private fun fetchFileFromFtp(version: VersionString): File? {
         val client: OkHttpClient = OkHttpClient()
-        val request: Request =  Request.Builder().url("https://www.lua.org/ftp/lua-${version.withDelimiter(".")}.tar.gz").build()
+        val request: Request = Request.Builder().url("https://www.lua.org/ftp/lua-${version.withDelimiter(".")}.tar.gz").build()
         val response: Response = client.newCall(request).execute()
 
         if (response.isSuccessful) {
-            val outputFile: File = File(Settings.directories["download"]!!["dir"].toString(), "lua-${version.rawVersion}.tar.gz")
+            val outputFile: File = File(Settings.directories["downloads"]!!["dir"].toString(), "lua-${version.rawVersion}.tar.gz")
 
             response.body?.byteStream().use { input ->
                 outputFile.outputStream().use { output ->
