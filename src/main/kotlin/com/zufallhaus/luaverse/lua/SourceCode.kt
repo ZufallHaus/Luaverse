@@ -4,6 +4,7 @@ import com.zufallhaus.luaverse.Settings
 import com.zufallhaus.luaverse.utility.VersionString
 
 import java.io.File
+import java.nio.file.Path
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -25,6 +26,30 @@ class SourceCode(val version: VersionString) {
         private set
     var extractedFiles: File? = null
         private set
+
+
+    init {
+        // Downloads Lua.
+        println("Downloading...")
+        val downloadSuccess: Boolean = this.download()
+
+        if (downloadSuccess) {
+            println("Download complete!")
+
+            // Extracts Lua.
+            println("Extracting...")
+            val extractSuccess: Boolean = this.extract()
+
+            if (extractSuccess) {
+                println("Extraction complete!")
+            } else {
+                println("Extraction failed!")
+            }
+
+        } else {
+            println("Download failed!")
+        }
+    }
 
     fun download(): Boolean {
         // Downloads the requested version of Lua from https://www.lua.org/ftp/.
@@ -65,6 +90,16 @@ class SourceCode(val version: VersionString) {
         }
 
         return extractedFiles != null
+    }
+
+    // Need to add handling for when a version is already built/installed.
+    fun build() {
+        // Creates a folder to build this specific version of Lua in.
+        val buildDir: Path = (Settings.directories["Builds"] as Path).resolve("lua-" + version.rawVersion)
+
+
+        // Create a folder to install this specific version of Lua to.
+        val installDir: Path = (Settings.directories["Lua"] as Path).resolve("lua-" + version.rawVersion)
     }
 
     // Maybe make a private function wrapped by this?

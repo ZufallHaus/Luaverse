@@ -7,7 +7,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
-
+// I don't think this class is needed.
 class Architect(sourceCode: SourceCode) {
     // This needs to do what build.bat does but in Kotlin.
     init {

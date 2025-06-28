@@ -5,6 +5,7 @@ returned is unused, but I am implementing it in case it is needed in the future.
 
 package com.zufallhaus.luaverse
 
+import com.zufallhaus.luaverse.lua.Architect
 import com.zufallhaus.luaverse.lua.SourceCode
 import com.zufallhaus.luaverse.lua.VersionHandler
 import com.zufallhaus.luaverse.system.PathEnvironment
@@ -170,25 +171,7 @@ class Command(command: List<String>) {
         val sourceCode: SourceCode = SourceCode(version)
 
         // Downloads the files.
-        println("Downloading...")
-        val downloadSuccess: Boolean = sourceCode.download()
 
-        if (downloadSuccess) {
-            println("Download complete!")
-
-            // Extracts the files.
-            println("Extracting...")
-            val extractSuccess: Boolean = sourceCode.extract()
-
-            if (extractSuccess) {
-                println("Extraction complete!")
-            } else {
-                println("Extraction failed!")
-            }
-
-        } else {
-            println("Download failed!")
-        }
 
         return true
     }
